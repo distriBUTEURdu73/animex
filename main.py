@@ -1,13 +1,9 @@
-
-from keep_alive import keep_alive
 import discord
 from discord.ext import commands
 import os
 import json
 from discord import app_commands, Interaction, TextChannel, Attachment, Embed, ButtonStyle
 from discord.ui import View, Button
-
-keep_alive()  # Lance le petit serveur web qui sera pingé par UptimeRobot
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
