@@ -289,17 +289,33 @@ async def help_command(interaction: Interaction):
 
     await interaction.response.send_message(embed=embed, view=view, ephemeral=False)
 
-# Synchroniser les commandes slash
+# ---------- EVENT READY ----------
 @bot.event
 async def on_ready():
-    await bot.wait_until_ready()  # ← S'assure que tout est bien prêt
+    await bot.wait_until_ready()
     try:
         synced = await bot.tree.sync()
         print(f"✅ {len(synced)} commandes slash synchronisées.")
     except Exception as e:
-        print(f"❌ Erreur lors de la synchronisation des commandes : {e}")
+        print(f"❌ Erreur lors de la synchronisation : {e}")
+    print(f"🤖 Bot connecté en tant que {bot.user}")
 
-    print(f"🤖 Bot connecté en tant que : {bot.user}")
+# ---------- LANCEMENT ----------
+if __name__ == "__main__":
+    keep_alive()
+    token = os.getenv("DISCORD_TOKEN")
+    if not token:
+        print("❌ Erreur : DISCORD_TOKEN introuvable dans les variables d'environnement.")
+    else:
+        try:
+            bot.run(token)
+        except discord.errors.HTTPException as e:
+            if e.status == 429:
+                print("⚠️ Rate limit détecté. Attente 60 secondes avant redémarrage...")
+                time.sleep(60)
+                os._exit(1)  # Laisse Render redémarrer après délai
+            else:
+                raise e
 
 import os
 bot.run(os.getenv("DISCORD_TOKEN"))
