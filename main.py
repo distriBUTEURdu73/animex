@@ -1,11 +1,30 @@
-import discord
-from discord.ext import commands
 import os
 import json
+import time
+import discord
+from discord.ext import commands
 from discord import app_commands, Interaction, TextChannel, Attachment, Embed, ButtonStyle
 from discord.ui import View, Button
+from flask import Flask
+from threading import Thread
 
+# ---------- KEEP ALIVE POUR RENDER ----------
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot en ligne !"
+
+def run_flask():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run_flask)
+    t.start()
+
+# ---------- BOT DISCORD ----------
 intents = discord.Intents.default()
+intents.message_content = True  # Pour éviter le warning
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 CONFIG_FILE = "config.json"
