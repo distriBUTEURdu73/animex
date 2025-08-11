@@ -45,7 +45,7 @@ def save_config(config):
 
 # Commande setup
 @bot.tree.command(name="setup", description="Configurer le salon pour les réponses à l'animation")
-@app_commands.describe(channel="Salon où les réponses seront envoyés")
+@app_commands.describe(channel="Salon où les réponses seront envoyées")
 @app_commands.checks.has_permissions(administrator=True)
 async def setup(interaction: discord.Interaction, channel: discord.TextChannel):
     config = load_config()
@@ -55,6 +55,13 @@ async def setup(interaction: discord.Interaction, channel: discord.TextChannel):
 
 @setup.error
 async def setup_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+    if interaction.response.is_done():
+        await interaction.followup.send(
+            "❌ Une erreur est survenue, mais la réponse initiale a déjà été envoyée.",
+            ephemeral=True
+        )
+        return
+
     if isinstance(error, app_commands.errors.MissingPermissions):
         await interaction.response.send_message(
             "❌ Tu dois être **administrateur** pour utiliser cette commande.", ephemeral=True
@@ -83,7 +90,7 @@ async def anim(interaction: discord.Interaction, message: str):
         return
 
     await channel.send(f"**Réponse de {interaction.user.mention} :**\n{message}")
-    await interaction.response.send_message("✅ Réponse envoyé !", ephemeral=True)
+    await interaction.response.send_message("✅ Réponse envoyée !", ephemeral=True)
 
 # commande ping
 @bot.tree.command(name="ping", description="Tester si le bot est en ligne")
@@ -124,9 +131,15 @@ async def animcreate(
     except Exception as e:
         await interaction.response.send_message(f"❌ Erreur : {str(e)}", ephemeral=True)
 
-# Gestion d'erreurs si non-admin
 @animcreate.error
 async def animcreate_error(interaction: Interaction, error: app_commands.AppCommandError):
+    if interaction.response.is_done():
+        await interaction.followup.send(
+            "❌ Une erreur est survenue, mais la réponse initiale a déjà été envoyée.",
+            ephemeral=True
+        )
+        return
+
     if isinstance(error, app_commands.errors.MissingPermissions):
         await interaction.response.send_message(
             "❌ Tu dois être **administrateur** pour utiliser cette commande.", ephemeral=True
@@ -135,8 +148,6 @@ async def animcreate_error(interaction: Interaction, error: app_commands.AppComm
         await interaction.response.send_message(
             f"❌ Une erreur est survenue : {str(error)}", ephemeral=True
         )
-
-# Animex animation spéciale
 
 # Commande animexsetup
 @bot.tree.command(name="animexsetup", description="Définir le salon et le ping pour les animations spéciales Animex")
