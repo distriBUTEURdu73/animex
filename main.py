@@ -316,6 +316,3 @@ if __name__ == "__main__":
                 os._exit(1)  # Laisse Render redémarrer après délai
             else:
                 raise e
-
-import os
-bot.run(os.getenv("DISCORD_TOKEN"))
