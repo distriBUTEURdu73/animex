@@ -188,4 +188,6 @@ async def on_ready():
 
 # ------------ LANCEMENT ------------
 keep_alive()
+import time
+time.sleep(5)  # Pause de 5 secondes avant connexion
 bot.run(os.getenv("DISCORD_TOKEN"))
